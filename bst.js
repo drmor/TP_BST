@@ -8,7 +8,7 @@ class Node {
 class Tree {
   constructor(arr) {
     this.arr = arr;
-    const uniqueArr = [...new Set(arr)];
+    const uniqueArr = [...new Set(arr)].sort((a, b) => a - b);
     this.root = buildTree(uniqueArr);
   }
 }
@@ -20,7 +20,7 @@ function buildTree(arr, start = 0, end = arr.length - 1) {
   root.right = buildTree(arr, mid + 1, end);
   return root;
 }
-const test = new Tree([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+const test = new Tree([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]);
 
 const prettyPrint = (node, prefix = '', isLeft = true) => {
   if (node === null || node === undefined) {
