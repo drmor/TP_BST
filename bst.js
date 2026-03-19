@@ -81,26 +81,25 @@ class Tree {
       callback(level);
     }
   }
-  inOrderForEach(callback, current = this.root, result = []) {
+  inOrderForEach(callback, current = this.root) {
     if (current === null) return;
-    this.inOrderForEach(callback, current.left, result);
-    result.push(current.data);
-    this.inOrderForEach(callback, current.right, result);
-    if (current === this.root) callback('inorder: ' + result);
+    this.inOrderForEach(callback, current.left);
+    callback(current.data);
+    this.inOrderForEach(callback, current.right);
   }
   preOrderForEach(callback, current = this.root, result = []) {
     if (current === null) return;
     result.push(current.data);
     this.preOrderForEach(callback, current.left, result);
     this.preOrderForEach(callback, current.right, result);
-    if (current === this.root) callback('preorder: ' + result);
+    if (current === this.root) callback('preOrder: ' + result);
   }
   postOrderForEach(callback, current = this.root, result = []) {
     if (current === null) return;
     this.postOrderForEach(callback, current.left, result);
     this.postOrderForEach(callback, current.right, result);
     result.push(current.data);
-    if (current === this.root) callback('postorder: ' + result);
+    if (current === this.root) callback('postOrder: ' + result);
   }
   height(value, current = this.root) {
     if (current === null) return;
@@ -134,6 +133,22 @@ class Tree {
     }
     return undefined;
   }
+  isBalanced(current = this.root) {
+    if (current === null) return true;
+    const left = this.calculateHeight(current.left);
+    const right = this.calculateHeight(current.right);
+    const leftBalance = this.isBalanced(current.left);
+    const rightBalance = this.isBalanced(current.right);
+    if (Math.abs(left - right) <= 1 && leftBalance && rightBalance) {
+      return true;
+    } else return false;
+  }
+  rebalance() {
+    let currTreeArr = [];
+    this.inOrderForEach((value) => currTreeArr.push(value));
+    const newTree = buildTree(currTreeArr);
+    this.root = newTree;
+  }
 }
 function getSuccessor(curr) {
   curr = curr.right;
@@ -148,8 +163,10 @@ const buildTree = (arr, start = 0, end = arr.length - 1) => {
   root.right = buildTree(arr, mid + 1, end);
   return root;
 };
-const test = new Tree([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]);
-console.log(test.height(4));
+const test = new Tree([
+  62, 28, 79, 70, 51, 51, 101, 86, 37, 14, 3, 85, 63, 12, 42, 3,
+]);
+
 const prettyPrint = (node, prefix = '', isLeft = true) => {
   if (node === null || node === undefined) {
     return;
@@ -161,3 +178,23 @@ const prettyPrint = (node, prefix = '', isLeft = true) => {
 };
 
 prettyPrint(test.root);
+console.log(test.isBalanced());
+let inOrderArr = [];
+test.inOrderForEach((value) => inOrderArr.push(value));
+console.log('inOrder: ' + inOrderArr);
+test.preOrderForEach((value) => console.log(value));
+test.postOrderForEach((value) => console.log(value));
+test.insert(147);
+test.insert(253);
+test.insert(103);
+test.insert(444);
+prettyPrint(test.root);
+console.log(test.isBalanced());
+test.rebalance();
+prettyPrint(test.root);
+console.log(test.isBalanced());
+let newArr = [];
+test.inOrderForEach((value) => newArr.push(value));
+console.log('inOrder: ' + newArr);
+test.preOrderForEach((value) => console.log(value));
+test.postOrderForEach((value) => console.log(value));
